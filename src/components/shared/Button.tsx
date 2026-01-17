@@ -1,7 +1,8 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+import { motion, HTMLMotionProps } from 'framer-motion';
+
+interface ButtonProps extends HTMLMotionProps<"button"> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
@@ -40,7 +41,7 @@ export function Button({
         ${fullWidth ? 'w-full' : ''}
         ${className}
       `} disabled={disabled || isLoading} {...props}>
-      {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-      {children}
-    </motion.button>;
+    {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+    {children}
+  </motion.button>;
 }
