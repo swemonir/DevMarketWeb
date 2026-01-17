@@ -21,6 +21,7 @@ export function AuthModal({
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('buyer');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const {
@@ -32,7 +33,7 @@ export function AuthModal({
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!email) newErrors.email = 'Email is required'; else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email is invalid';
+    if (!email) newErrors.email = 'Email is required'; else if (!/\S+@\S+\.\S/.test(email)) newErrors.email = 'Email is invalid';
 
     // Password validation only for login/signup forms, not used in recovery/verification view strictly but kept for safety
     if (mode !== 'verification_sent') {
@@ -57,23 +58,17 @@ export function AuthModal({
         toast.success('Welcome back!');
         onClose();
       } else if (mode === 'signup') {
-        const response = await signup(name, email, password);
-        // If successful, show verification message logic
-        // We assume success if no error thrown, check if we need to show verification
-        // Check if user is logged in automatically (response.accessToken present)
+        const response = await signup(name, email, password, role);
         if (response?.accessToken) {
           toast.success('Account created successfully!');
           onClose();
         } else {
-          // No token? Likely needs verification
           setMode('verification_sent');
           toast.success('Please verify your email to continue.');
         }
       }
     } catch (error: any) {
       const message = error?.message || 'Authentication failed.';
-
-      // Check for specific verification error from backend
       if (message.toLowerCase().includes('verify') || message.toLowerCase().includes('verification')) {
         toast.error(message, { duration: 5000 });
       } else {
@@ -91,9 +86,6 @@ export function AuthModal({
       toast.error('Google login failed.');
     }
   };
-
-  // Reset state when modal opens/closes or mode flips if needed
-  // (Left simple for now)
 
   if (mode === 'verification_sent') {
     return (
@@ -121,7 +113,7 @@ export function AuthModal({
               fullWidth
               onClick={() => {
                 setMode('login');
-                setPassword(''); // Clear password for security
+                setPassword('');
               }}
             >
               Back to Sign In
@@ -194,7 +186,6 @@ export function AuthModal({
             error={errors.password}
             icon={<Lock className="w-4 h-4" />}
           />
-
           {mode === 'signup' && (
             <Input
               label="Confirm Password"
@@ -205,6 +196,33 @@ export function AuthModal({
               error={errors.confirmPassword}
               icon={<Lock className="w-4 h-4" />}
             />
+          )}
+          {mode === 'signup' && (
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-300">Account Type</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setRole('buyer')}
+                  className={`flex items-center justify-center px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${role === 'buyer'
+                    ? 'bg-blue-600/10 border-blue-500 text-blue-400'
+                    : 'bg-gray-800/50 border-gray-700 text-gray-400 hover:border-gray-600'
+                    }`}
+                >
+                  Buyer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole('seller')}
+                  className={`flex items-center justify-center px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${role === 'seller'
+                    ? 'bg-blue-600/10 border-blue-500 text-blue-400'
+                    : 'bg-gray-800/50 border-gray-700 text-gray-400 hover:border-gray-600'
+                    }`}
+                >
+                  Seller
+                </button>
+              </div>
+            </div>
           )}
 
           <div className="pt-2">

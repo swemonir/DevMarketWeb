@@ -1,0 +1,17 @@
+{
+  "statusCode": 200,
+  "body": {
+    "success": true,
+    "data": {
+      "id": "696646cd772b7c3bbb02a350",
+      "name": "Soriful",
+      "email": "admin@example.com",
+      "role": "admin",
+      "isEmailVerified": true,
+      "isBlocked": false,
+      "createdAt": "2026-01-13T13:21:17.952Z",
+      "updatedAt": "2026-01-17T06:39:10.246Z",
+      "lastLogin": "2026-01-17T06:39:10.245Z"
+    }
+  }
+}

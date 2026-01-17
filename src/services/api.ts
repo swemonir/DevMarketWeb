@@ -14,7 +14,6 @@ const api = axios.create({
     timeout: 15000,
 });
 
-// Request Interceptor: Attach token to every request
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('access_token');
@@ -66,11 +65,9 @@ export const getImageUrl = (relativePath: string) =>
 
 
 // --- Service Layer ---
-
-// Auth Service (using the clean API primitives)
 export const authService = {
     async login(email: string, password: string) {
-        const response = await post<any>('/auth/login', { email, password });
+        const response = await post<any>('/api/auth/login', { email, password });
         if (response.accessToken) {
             localStorage.setItem('access_token', response.accessToken);
         }
@@ -78,9 +75,7 @@ export const authService = {
     },
 
     async signup(name: string, email: string, password: string, role: string = 'buyer') {
-        // Determine endpoint based on Postman collection logic
-        const endpoint = '/api/auth/signup';
-        const response = await post<any>(endpoint, { name, email, password, role });
+        const response = await post<any>('/api/auth/signup', { name, email, password, role });
 
         if (response.accessToken) {
             localStorage.setItem('access_token', response.accessToken);
@@ -99,7 +94,7 @@ export const authService = {
     },
 
     async getMe() {
-        return await get<{ user: User }>('/users/profile/me');
+        return await get<any>('/api/users/profile/me');
     }
 };
 

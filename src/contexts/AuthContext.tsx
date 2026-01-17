@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, pass: string) => Promise<void>;
-  signup: (name: string, email: string, pass: string) => Promise<any>;
+  signup: (name: string, email: string, pass: string, role?: string) => Promise<any>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
@@ -32,8 +32,11 @@ export function AuthProvider({
 
     try {
       const response = await authService.getMe();
-      if (response && response.user) {
-        setUser(response.user);
+      // Handle different response structures: { user: ... } or { data: ... }
+      const userData = response.user || response.data;
+
+      if (userData) {
+        setUser(userData);
       } else {
         // If query fails or invalid response, clear token
         localStorage.removeItem('access_token');
@@ -56,41 +59,40 @@ export function AuthProvider({
     setLoading(true);
     try {
       const response = await authService.login(email, pass);
-      // Backend returns { accessToken, user, ... }
       if (response.user) {
         setUser(response.user);
+      } else if (response.data) {
+        setUser(response.data);
       } else {
-        // If user object isn't in login response, fetch it
         const me = await authService.getMe();
-        setUser(me.user);
+        setUser(me.user || me.data);
       }
     } catch (error: any) {
       console.error('Login error:', error);
-      throw error; // Re-throw to let component handle UI feedback
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const signup = async (name: string, email: string, pass: string) => {
+  const signup = async (name: string, email: string, pass: string, role: string = 'buyer') => {
     setLoading(true);
     try {
-      const response = await authService.signup(name, email, pass);
-
-      // If endpoint returns token/user immediately with 200/201
+      const response = await authService.signup(name, email, pass, role);
       if (response.accessToken) {
-        if (response.user) {
-          console.log(response.user);
-          setUser(response.user);
+        const userData = response.user || response.data;
+        if (userData) {
+          console.log(userData);
+          setUser(userData);
         } else {
           const me = await authService.getMe();
-          console.log(me.user);
-          setUser(me.user);
+          console.log(me.user || me.data);
+          setUser(me.user || me.data);
         }
       } else {
-        // If signup requires email verification or doesn't auto-login
-        // We might just notify success. 
-        // For now, assuming standard flow if token is present.
+        toast.error('Signup response missing accessToken');
+        console.error('Signup response missing accessToken');
+        throw new Error('Signup response missing accessToken');
       }
       return response;
     } catch (error: any) {
@@ -102,10 +104,8 @@ export function AuthProvider({
   };
 
   const loginWithGoogle = async () => {
-    // TODO: Implement Google Auth integration when backend ready
     setLoading(true);
     try {
-      // Placeholder
       await new Promise(resolve => setTimeout(resolve, 1000));
       toast.error('Google Login not yet implemented on backend');
     } finally {

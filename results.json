@@ -1,0 +1,10 @@
+{
+  "login": {
+    "success": true,
+    "token": "REDACTED"
+  },
+  "/users/profile/me": 404,
+  "/api/user/profile/me": 404,
+  "/user/profile/me": 404,
+  "/api/users/profile/me": 200
+}

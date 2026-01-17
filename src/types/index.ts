@@ -4,7 +4,7 @@ export interface User {
   email: string;
   avatar?: string;
   verified: boolean;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'buyer' | 'seller';
 }
 export interface Project {
   id: string;
