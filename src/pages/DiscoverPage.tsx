@@ -8,19 +8,42 @@ import { motion } from 'framer-motion';
 const MOCK_PROJECTS: Project[] = Array.from({
   length: 9
 }).map((_, i) => ({
-  id: `p${i}`,
-  title: `Project Nexus ${i + 1}`,
-  description: 'A powerful dashboard for managing developer workflows and assets with ease.',
-  thumbnail: `https://picsum.photos/seed/${i + 10}/800/450`,
-  category: i % 2 === 0 ? 'AI Tools' : 'Productivity',
-  profession: 'Developer',
-  platform: i % 3 === 0 ? 'Mobile' : 'Web',
-  tags: ['React', 'TypeScript', 'Tailwind'],
-  status: 'Approved',
-  verified: i % 2 === 0,
-  authorId: 'u1',
-  authorName: 'Alex Dev',
-  createdAt: new Date().toISOString()
+  _id: `p${i}`,
+  basicInfo: {
+    title: `Project Nexus ${i + 1}`,
+    description: 'A powerful dashboard for managing developer workflows and assets with ease.',
+    category: i % 2 === 0 ? 'AI Tools' : 'Productivity',
+    tags: ['react', 'node']
+  },
+  platform: {
+    type: 'Web'
+  },
+  marketplace: {
+    price: 4000 + (i * 100),
+    deliveryTime: 7 + i,
+    isForSale: true,
+    soldTo: null,
+    soldAt: null
+  },
+  metadata: {
+    submissionDate: new Date().toISOString(),
+    status: 'approved',
+    rejectionReason: null,
+    reviewedAt: new Date().toISOString(),
+    version: '1.0'
+  },
+  media: {
+    thumbnail: `https://picsum.photos/seed/${i + 10}/800/450`,
+    screenshots: []
+  },
+  owner: {
+    _id: `u${i}`,
+    name: 'Seller vai',
+    email: 'seller@example.com'
+  },
+  reviewedBy: 'admin',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
 }));
 export function DiscoverPage() {
   const [loading, setLoading] = useState(true);
@@ -46,27 +69,27 @@ export function DiscoverPage() {
     setLoading(true); // Trigger reload effect
   };
   return <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar */}
-        <aside className="w-full lg:w-64 flex-shrink-0">
-          <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
-        </aside>
+    <div className="flex flex-col lg:flex-row gap-8">
+      {/* Sidebar */}
+      <aside className="w-full lg:w-64 flex-shrink-0">
+        <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
+      </aside>
 
-        {/* Main Content */}
-        <main className="flex-1">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-white mb-2">
-              Discover Projects
-            </h1>
-            <p className="text-gray-400">
-              Explore the best tools and apps from our community.
-            </p>
-          </div>
+      {/* Main Content */}
+      <main className="flex-1">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-white mb-2">
+            Discover Projects
+          </h1>
+          <p className="text-gray-400">
+            Explore the best tools and apps from our community.
+          </p>
+        </div>
 
-          {loading ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map(i => <CardSkeleton key={i} />)}
-            </div> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project, idx) => <motion.div key={project.id} initial={{
+        {loading ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map(i => <CardSkeleton key={i} />)}
+        </div> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((project, idx) => <motion.div key={project._id} initial={{
             opacity: 0,
             y: 20
           }} animate={{
@@ -75,16 +98,16 @@ export function DiscoverPage() {
           }} transition={{
             delay: idx * 0.05
           }}>
-                  <ProjectCard project={project} />
-                </motion.div>)}
-            </div>}
+            <ProjectCard project={project} />
+          </motion.div>)}
+        </div>}
 
-          {!loading && projects.length === 0 && <div className="text-center py-20">
-              <p className="text-gray-400 text-lg">
-                No projects found matching your filters.
-              </p>
-            </div>}
-        </main>
-      </div>
-    </div>;
+        {!loading && projects.length === 0 && <div className="text-center py-20">
+          <p className="text-gray-400 text-lg">
+            No projects found matching your filters.
+          </p>
+        </div>}
+      </main>
+    </div>
+  </div>;
 }

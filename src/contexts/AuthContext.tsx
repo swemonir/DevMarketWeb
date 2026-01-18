@@ -89,10 +89,6 @@ export function AuthProvider({
           console.log(me.user || me.data);
           setUser(me.user || me.data);
         }
-      } else {
-        toast.error('Signup response missing accessToken');
-        console.error('Signup response missing accessToken');
-        throw new Error('Signup response missing accessToken');
       }
       return response;
     } catch (error: any) {

@@ -1,8 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
-import { User } from '../types';
 
 // Use environment variable or fallback to localhost
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 // Create Axios instance with default config
 const api = axios.create({
@@ -98,11 +97,56 @@ export const authService = {
     }
 };
 
+export const projectService = {
+    async createProject(projectData: any) {
+        // Wrap in 'data' key as backend parses it from req.body.data
+        return await post<any>('/api/projects', { data: projectData });
+    },
+
+    async updateProject(id: string, projectData: any) {
+        return await put<any>(`/api/projects/${id}`, { data: projectData });
+    },
+
+    async uploadMedia(id: string, files: File[]) {
+        const formData = new FormData();
+        files.forEach(file => {
+            formData.append('media', file);
+        });
+
+        return await axios.post(`${API_BASE_URL}/api/projects/${id}/media`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            }
+        }).then(res => res.data);
+    },
+
+    async submitProject(id: string) {
+        return await post<any>(`/api/projects/${id}/submit`);
+    },
+
+    async getAllProjects() {
+        return await get<any>('/api/projects');
+    }
+};
+
+export const marketplaceService = {
+    async getMarketplaceProjects(page: number = 1, limit: number = 10) {
+        return await get<any>(`/api/marketplace?page=${page}&limit=${limit}`);
+    },
+
+    async getProjectById(id: string) {
+        return await get<any>(`/api/projects/${id}`);
+    }
+};
+
 export default {
     get,
     post,
     put,
     patch,
     del,
-    authService
+    authService,
+    projectService,
+    marketplaceService
 };

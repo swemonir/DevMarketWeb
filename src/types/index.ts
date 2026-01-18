@@ -7,31 +7,101 @@ export interface User {
   role: 'user' | 'admin' | 'buyer' | 'seller';
 }
 export interface Project {
-  id: string;
+  _id: string;
+  basicInfo: {
+    title: string;
+    description: string;
+    category: string;
+    tags: string[];
+  };
+  platform: {
+    type: string;
+  };
+  marketplace: {
+    price: number;
+    soldTo?: string | null;
+    soldAt?: string | null;
+    isForSale: boolean;
+    deliveryTime?: number; // Added as it was in previous request
+  };
+  metadata: {
+    submissionDate: string;
+    status: string;
+    rejectionReason?: string | null;
+    reviewedAt?: string | null;
+    version: string;
+  };
+  media: {
+    thumbnail: string | null;
+    screenshots: string[];
+  };
+  owner: {
+    _id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+  };
+  reviewedBy?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProjectSubmission {
+  basicInfo: {
+    title: string;
+    description: string;
+    category: string;
+    tags: string[];
+  };
+  platform: {
+    type: string;
+    urls: {
+      website?: string;
+      appStore?: string;
+      playStore?: string;
+    };
+  };
+  marketplace: {
+    isForSale: boolean;
+    price: number;
+    contact: {
+      email: string;
+      whatsapp?: string;
+    };
+  };
+  media?: {
+    thumbnail?: string | null;
+    screenshots?: string[];
+  };
+}
+export interface MarketplaceItem {
+  _id: string;
   title: string;
   description: string;
-  fullDescription?: string;
-  thumbnail: string;
-  images?: string[];
-  category: 'AI Tools' | 'Productivity' | 'Social' | 'Entertainment' | 'Education';
-  profession: 'Developer' | 'Designer' | 'Student' | 'Marketer' | 'Freelancer';
-  platform: 'Web' | 'Mobile';
-  tags: string[];
-  status: 'Draft' | 'Pending' | 'Approved';
-  verified: boolean;
-  websiteUrl?: string;
-  appStoreUrl?: string;
-  playStoreUrl?: string;
-  authorId: string;
-  authorName: string;
-  createdAt: string;
-}
-export interface MarketplaceItem extends Project {
+  category: string;
   price: number;
-  currency: string;
-  sellerVerified: boolean;
-  contactEmail?: string;
-  whatsapp?: string;
-  type: 'Web App' | 'Mobile App' | 'Source Code';
+  deliveryTime?: number;
+  owner: {
+    _id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+  };
+  status: string;
+  media: string[];
+  isForSale: boolean;
+  createdAt: string;
+  updatedAt: string;
+  sellerVerified?: boolean; // Keep for UI compatibility if needed
 }
+
+export interface MarketplaceResponse {
+  success: boolean;
+  count: number;
+  total: number;
+  totalPages: number;
+  currentPage: number;
+  data: MarketplaceItem[];
+}
+
 export type AuthMode = 'login' | 'signup';
