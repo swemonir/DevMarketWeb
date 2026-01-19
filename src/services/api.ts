@@ -94,6 +94,34 @@ export const authService = {
 
     async getMe() {
         return await get<any>('/api/users/profile/me');
+    },
+
+    async updateProfile(data: { name?: string; email?: string; interests?: string[] }) {
+        return await put<any>('/api/users/profile/me', data);
+    },
+
+    async updatePassword(data: { currentPassword?: string; password?: string }) {
+        return await patch<any>('/api/users/profile/me', data);
+    },
+
+    async uploadAvatar(file: File) {
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        return await axios.post(`${API_BASE_URL}/api/users/profile/avatar`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            }
+        }).then(res => res.data);
+    },
+
+    async deleteAvatar() {
+        return await del<any>('/api/users/profile/avatar');
+    },
+
+    async deleteAccount() {
+        return await del<any>('/api/users/profile/me');
     }
 };
 

@@ -10,6 +10,7 @@ interface AuthContextType {
   signup: (name: string, email: string, pass: string, role?: string) => Promise<any>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -114,6 +115,18 @@ export function AuthProvider({
     setUser(null);
   };
 
+  const refreshUser = async () => {
+    try {
+      const response = await authService.getMe();
+      const userData = response.user || response.data;
+      if (userData) {
+        setUser(userData);
+      }
+    } catch (error) {
+      console.error('Failed to refresh user profile:', error);
+    }
+  };
+
   return <AuthContext.Provider value={{
     user,
     loading,
@@ -121,6 +134,7 @@ export function AuthProvider({
     signup,
     loginWithGoogle,
     logout,
+    refreshUser,
     isAuthenticated: !!user
   }}>
     {children}

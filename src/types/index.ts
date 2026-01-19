@@ -5,6 +5,7 @@ export interface User {
   avatar?: string;
   verified: boolean;
   role: 'user' | 'admin' | 'buyer' | 'seller';
+  interests?: string[];
 }
 export interface Project {
   _id: string;
