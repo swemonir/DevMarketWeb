@@ -104,4 +104,13 @@ export interface MarketplaceResponse {
   data: MarketplaceItem[];
 }
 
+export interface DiscoverResponse {
+  success: boolean;
+  count: number;
+  total: number;
+  totalPages: number;
+  currentPage: number;
+  data: Project[];
+}
+
 export type AuthMode = 'login' | 'signup';

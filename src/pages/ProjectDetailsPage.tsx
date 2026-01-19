@@ -71,19 +71,19 @@ export function ProjectDetailsPage() {
         <div>
           <div className="flex items-center gap-3 mb-4">
             <Badge variant="default" className="bg-blue-600/20 text-blue-400 border-blue-500/30">
-              {project?.category.slice(0, 3)}
+              {project.basicInfo?.category}
             </Badge>
             <Badge variant="verified">
-              {project?.status?.toUpperCase() || 'UNKNOWN'}
+              {project.metadata?.status?.toUpperCase() || 'UNKNOWN'}
             </Badge>
           </div>
 
           <h1 className="text-4xl font-bold text-white mb-6">
-            {project?.title || 'Untitled Project'}
+            {project.basicInfo?.title || 'Untitled Project'}
           </h1>
 
           <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed">
-            {project?.description || 'No description available'}
+            {project.basicInfo?.description || 'No description available'}
           </div>
 
           {project.basicInfo?.tags && project.basicInfo.tags.length > 0 && (

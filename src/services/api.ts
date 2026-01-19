@@ -127,6 +127,11 @@ export const projectService = {
 
     async getAllProjects() {
         return await get<any>('/api/projects');
+    },
+
+    async getProjectsByStatus(status: string, owner?: string) {
+        const query = owner ? `?owner=${owner}` : '';
+        return await get<any>(`/api/projects/status/${status.toLowerCase()}${query}`);
     }
 };
 
@@ -140,6 +145,26 @@ export const marketplaceService = {
     }
 };
 
+export const discoverService = {
+    async getDiscoverItems(params: { limit?: number; page?: number; category?: string; search?: string } = {}) {
+        const queryParams = new URLSearchParams();
+        if (params.limit) queryParams.append('limit', params.limit.toString());
+        if (params.page) queryParams.append('page', params.page.toString());
+        if (params.category && params.category !== 'All') queryParams.append('category', params.category.toLowerCase().replace(/\s+/g, '-'));
+        if (params.search) queryParams.append('search', params.search);
+
+        return await get<any>(`/api/discover?${queryParams.toString()}`);
+    },
+
+    async getSuggestions() {
+        return await get<any>('/api/discover/suggestions');
+    },
+
+    async updateInterests(interests: string[]) {
+        return await put<any>('/api/users/profile/me', { interests });
+    }
+};
+
 export default {
     get,
     post,
@@ -148,5 +173,6 @@ export default {
     del,
     authService,
     projectService,
-    marketplaceService
+    marketplaceService,
+    discoverService
 };

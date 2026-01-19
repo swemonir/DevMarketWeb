@@ -1,0 +1,176 @@
+{
+	"info": {
+		"_postman_id": "projects-api-devmark-v4",
+		"name": "DevMark Complete API (v4 - Privacy Fix)",
+		"description": "Final collection with strict privacy and owner filtering.\n\n### CRITICAL UPDATE\nTo view YOUR OWN projects (Profile View), always use `?owner=me` in the query string.\n\n### Access Rules:\n- `?owner=me`: Shows ONLY your projects (Drafts, Pending, Marketplace, etc.)\n- No owner filter: Shows all PUBLIC projects + your own private ones (Discovery Feed mode).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Personal Profile (My Data)",
+			"item": [
+				{
+					"name": "My Entire Profile (All my projects)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/projects?owner=me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"projects"
+							],
+							"query": [
+								{
+									"key": "owner",
+									"value": "me"
+								}
+							]
+						},
+						"description": "STRICT FILTER: Returns ONLY your projects. Use this for the main Profile page."
+					},
+					"response": []
+				},
+				{
+					"name": "My Marketplace Projects",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/projects/status/marketplace?owner=me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"status",
+								"marketplace"
+							],
+							"query": [
+								{
+									"key": "owner",
+									"value": "me"
+								}
+							]
+						},
+						"description": "Shows ONLY your projects that are currently in the marketplace."
+					},
+					"response": []
+				},
+				{
+					"name": "My Pending/Drafts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/projects/status/pending?owner=me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"status",
+								"pending"
+							],
+							"query": [
+								{
+									"key": "owner",
+									"value": "me"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Public Discovery",
+			"item": [
+				{
+					"name": "Global Feed (Discover)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/discover",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"discover"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Marketplace (All Items)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/marketplace",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"marketplace"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "YOUR_TOKEN",
+			"type": "string"
+		}
+	]
+}

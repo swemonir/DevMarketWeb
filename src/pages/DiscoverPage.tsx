@@ -1,66 +1,48 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FilterSidebar } from '../components/discover/FilterSidebar';
 import { ProjectCard } from '../components/discover/ProjectCard';
 import { CardSkeleton } from '../components/shared/LoadingSkeleton';
-import { Project } from '../types';
+import { Project, DiscoverResponse } from '../types';
 import { motion } from 'framer-motion';
-// Mock Data
-const MOCK_PROJECTS: Project[] = Array.from({
-  length: 9
-}).map((_, i) => ({
-  _id: `p${i}`,
-  basicInfo: {
-    title: `Project Nexus ${i + 1}`,
-    description: 'A powerful dashboard for managing developer workflows and assets with ease.',
-    category: i % 2 === 0 ? 'AI Tools' : 'Productivity',
-    tags: ['react', 'node']
-  },
-  platform: {
-    type: 'Web'
-  },
-  marketplace: {
-    price: 4000 + (i * 100),
-    deliveryTime: 7 + i,
-    isForSale: true,
-    soldTo: null,
-    soldAt: null
-  },
-  metadata: {
-    submissionDate: new Date().toISOString(),
-    status: 'approved',
-    rejectionReason: null,
-    reviewedAt: new Date().toISOString(),
-    version: '1.0'
-  },
-  media: {
-    thumbnail: `https://picsum.photos/seed/${i + 10}/800/450`,
-    screenshots: []
-  },
-  owner: {
-    _id: `u${i}`,
-    name: 'Seller vai',
-    email: 'seller@example.com'
-  },
-  reviewedBy: 'admin',
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
-}));
+import { discoverService } from '../services/api';
+import { Search } from 'lucide-react';
+import { Input } from '../components/shared/Input';
+
 export function DiscoverPage() {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({
     profession: 'All',
     categories: [] as string[],
     platform: 'All'
   });
-  useEffect(() => {
-    // Simulate API fetch
-    const timer = setTimeout(() => {
-      setProjects(MOCK_PROJECTS);
+
+  const fetchProjects = async () => {
+    setLoading(true);
+    try {
+      const response: DiscoverResponse = await discoverService.getDiscoverItems({
+        limit: 10,
+        page: 1,
+        category: filters.categories.length > 0 ? filters.categories[0] : 'All',
+        search: searchQuery
+      });
+      if (response.success) {
+        setProjects(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch discovery items:', error);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchProjects();
+    }, 500); // Debounce search/filter changes
     return () => clearTimeout(timer);
-  }, [filters]);
+  }, [filters, searchQuery]);
   const handleFilterChange = (key: string, value: any) => {
     setFilters(prev => ({
       ...prev,
@@ -78,12 +60,24 @@ export function DiscoverPage() {
       {/* Main Content */}
       <main className="flex-1">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white mb-2">
-            Discover Projects
-          </h1>
-          <p className="text-gray-400">
-            Explore the best tools and apps from our community.
-          </p>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-2xl font-bold text-white mb-2">
+                Discover Projects
+              </h1>
+              <p className="text-gray-400">
+                Explore the best tools and apps from our community.
+              </p>
+            </div>
+            <div className="w-full md:w-72">
+              <Input
+                placeholder="Search projects..."
+                icon={<Search className="w-4 h-4" />}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
 
         {loading ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
